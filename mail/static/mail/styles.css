@@ -1,0 +1,28 @@
+textarea {
+    min-height: 400px;
+}
+
+.btn.activo {
+    background-color: #acd2fa;
+    color: #2a2b2b;
+}
+
+.errorlist, errors {
+    color: red;
+}
+
+.message {
+    color: green;
+}
+
+.listado {
+    broder
+}
+
+.container {
+    margin-top: 30px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}

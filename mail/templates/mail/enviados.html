@@ -1,0 +1,54 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2>Lista de Emails enviados por el correo: {{ request.user.email }}</h2>
+
+    <button class="btn btn-sm btn-outline-primary activo" id="enviados">Enviados</button>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'mail:nuevo' %}" id="nuevo">Nuevo</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'mail:logout' %}">Salir</a>
+    <hr>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}  <div class="message" role="status">{{ message }}</div>{% endif %}
+            {% if message.tags == 'error' %}  <div class="errors" role="alert">{{ message }}</div>{% endif %}
+        {% endfor %}
+        <hr>
+    {% endif %}
+
+    <div id="emails-view">
+        <form class="form-inline" action="{% url 'mail:asignar_categoria' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group mb-2">
+                <label>Seleccionar Emails y asignar a Categoria:</label>
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <select name="categoria" class="form-control">
+                            <option value="0">NINGUNA</option>
+                        <!-- Completar aqui.
+                            Recorrer el queryset de "categorias" y generar una etiqueta <option> por cada registro
+                        -->
+                </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary mb-2">Asignar</button>
+           <br> <hr> <br>
+            <table class="table table-striped">
+                <tr>
+                    <th>Destinatario</th>
+                    <th>Asunto</th>
+                    <th>Fecha de Envío</th>
+                    <th>Categoria</th>
+                </tr>
+               <!-- Completar aqui.
+                    Recorrer el queryset de "emails_enviados" y generar una fila de tabla con sus correspondientes celdas.
+                    En la primera celda agregar a la izquierda del contenido, el siguiente campo checkbox:
+                    <input type="checkbox" name="mail" value="{{ mail.id }}"> (suponiendo que la variable "mail" es el
+                    nombre de la variable de cada iteracion).
+                -->
+            </table>
+        </form>
+    </div>
+
+{% endblock %}
