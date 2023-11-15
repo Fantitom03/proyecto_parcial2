@@ -13,12 +13,10 @@ from .models import User, Mail, Categoria
 
 @login_required
 def enviados(request):
-    # Completar aqui.
-    # Renderizar el template "mail/enviados.html" enviando como variables de contexto: una lista de los mails enviados
-    # por el usuario logueado ordenados por fecha de envio en forma descendente; y una lista de todas las categorias
-    # ordenadas por nombre
-
-    # Fin Completar aqui
+    usuario_logueado = request.user
+    messages = Mail.objects.filter(usuario_origen=usuario_logueado).order_by("-fecha_envio")
+    categorias = Categoria.objects.all().order_by("categoria")
+    return render(request, 'mail/enviados.html', {'messages': messages, 'categorias': categorias})
     pass
 
 
@@ -29,41 +27,36 @@ def nuevo(request):
     if request.method == 'POST':
         email_form = MailForm(request.POST)
         if email_form.is_valid():
-            # Completar aqui.
-            # Se deben guardar los datos que provienen del formulario pero sin aplicar los cambios
-            # a la B.D. (commit=False). Luego se debe asignar a la instancia devuelta por el Form, los campos "usuario_origen"
-            # y "mail_origen" de acuerdo a los datos del usuario logueado. Finalmente, guardar los datos del objeto en la B.D.
+            nuevo_email = email_form.save(commit=False)
 
+            nuevo_email.usuario_origen = request.user
+            nuevo_email.mail_origen = request.user.email
+            nuevo_email.save()
 
-            # Fin Completar aqui
-            messages.success(request,
-                             'Se ha enviado correctamente el Email a {}'.format(nuevo_email.destinatario))
-
-            # Completar aqui. Redireccionar el control a la vista "enviados"
-
-            # Fin Completar aqui
+            return redirect('mail:enviados')
     else:
-        # Se inicializa el Formulario con el valor correspondiente del campo "mail_origen" de acuerdo a los datos del usuario
         email_form = MailForm(initial={'mail_origen': request.user.email})
 
-    # Completar aqui. Renderizar el template 'mail/nuevo.html' y enviar en el contexto la variable "email_form"
+    # Se renderiza el template 'mail/nuevo.html' y se envía en el contexto la variable "email_form"
+    return render(request, 'mail/nuevo.html', {'form': email_form})
 
-    # Fin Completar aqui
 
 
 @login_required
 def asignar_categoria(request):
-    # Completar aqui.
-    # Si los datos se enviaron por el método POST, obtener la lista de ids de emails seleccionados, haciendo:
-    #    ids_emails_seleccionados = request.POST.getlist('mail')
-    # Luego, obtener el ID de la categoria seleccionada en el combo y recuperar la instancia de categira de acuerdo a ese ID.
-    # Si la categoria tiene el valor '0' (Ninguna), actualizar los registros de emails seleccionados con "categoria=None".
-    # Caso contrario, actualizar los registros de emails seleccionados con la categoria seleccionada.
-    # Finalmente, redireccionar el control a la vista "enviados"
-
-
-    # Fin Completar aqui
-    pass
+    if request.method == 'POST':
+        ids_emails_seleccionados = request.POST.getlist('mail')
+        categoria_selecionada = int(request.POST.get('categoria'))
+        for id_email in ids_emails_seleccionados:
+            email = Mail.objects.get(id=id_email)
+            if categoria_selecionada == 0:
+                email.categoria = None
+            else:
+                email.categoria = Categoria.objects.get(id=categoria_selecionada)
+            email.save()
+        return redirect('mail:enviados')
+    else:
+        return redirect('mail:enviados')
 
 
 def login_view(request):

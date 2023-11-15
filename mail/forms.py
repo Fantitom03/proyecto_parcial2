@@ -1,5 +1,4 @@
 from django import forms
-
 from .models import Mail
 
 
@@ -18,5 +17,9 @@ class MailForm(forms.ModelForm):
         self.fields['mail_origen'].widget.attrs['readonly'] = 'true'
 
     def clean(self):
-        # Completar aqui. Validar que el campo “mail_destinatario” no sea igual al “mail_origen”
+        super().clean()
+        mail_origen = self.cleaned_data["mail_origen"]
+        mail_destinatario = self.cleaned_data["destinatario"]
+        if mail_origen == mail_destinatario:
+            raise forms.ValidationError("El mail de origen no puede ser igual que el del destinatario")
         pass

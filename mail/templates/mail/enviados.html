@@ -26,9 +26,9 @@
             <div class="form-group mx-sm-3 mb-2">
                 <select name="categoria" class="form-control">
                             <option value="0">NINGUNA</option>
-                        <!-- Completar aqui.
-                            Recorrer el queryset de "categorias" y generar una etiqueta <option> por cada registro
-                        -->
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}">{{ categoria.categoria }}</option>
+                        {% endfor %}
                 </select>
           </div>
 
@@ -41,13 +41,16 @@
                     <th>Fecha de Envío</th>
                     <th>Categoria</th>
                 </tr>
-               <!-- Completar aqui.
-                    Recorrer el queryset de "emails_enviados" y generar una fila de tabla con sus correspondientes celdas.
-                    En la primera celda agregar a la izquierda del contenido, el siguiente campo checkbox:
-                    <input type="checkbox" name="mail" value="{{ mail.id }}"> (suponiendo que la variable "mail" es el
-                    nombre de la variable de cada iteracion).
-                -->
+                {% for mail in messages %}
+                <tr>
+                    <td><input type="checkbox" name="mail" value="{{ mail.id }}">{{mail.destinatario}}</td>
+                    <td>{{mail.asunto}}</td>
+                    <td>{{mail.fecha_envio}}</td>
+                    <td>{{mail.categoria.categoria}}</td>
+                </tr>
+                {% endfor %}
             </table>
+
         </form>
     </div>
 
